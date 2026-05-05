@@ -68,73 +68,74 @@ public class login extends JFrame {
     }
 
     private void dangNhap() {
-    String maNhanVien = txtTaiKhoan.getText().trim();
-    String matKhau = new String(txtMatKhau.getPassword()).trim();
+        String maNhanVien = txtTaiKhoan.getText().trim();
+        String matKhau = new String(txtMatKhau.getPassword()).trim();
 
-    if (maNhanVien.isEmpty() || matKhau.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ mã nhân viên và mật khẩu.");
-        return;
-    }
-
-    String sql = "SELECT MaNhanVien, VaiTro, DangDangNhap " +
-                 "FROM TaiKhoan " +
-                 "WHERE MaNhanVien = ? AND MatKhau = ? AND TrangThaiTK = 1";
-
-    try {
-        Connection con = DB.getConnection();
-
-        if (con == null) {
-            JOptionPane.showMessageDialog(this, "Không thể kết nối cơ sở dữ liệu.");
+        if (maNhanVien.isEmpty() || matKhau.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ mã nhân viên và mật khẩu.");
             return;
         }
 
-        PreparedStatement ps = con.prepareStatement(sql);
-        ps.setString(1, maNhanVien);
-        ps.setString(2, matKhau);
+        String sql = "SELECT MaNhanVien, VaiTro, DangDangNhap " +
+                     "FROM TaiKhoan " +
+                     "WHERE MaNhanVien = ? AND MatKhau = ? AND TrangThaiTK = 1";
 
-        ResultSet rs = ps.executeQuery();
+        try (Connection con = DB.getConnection()) {
 
-        if (rs.next()) {
-            String vaiTro = rs.getString("VaiTro");
-            String maNV = rs.getString("MaNhanVien");
-            boolean dangDangNhap = rs.getBoolean("DangDangNhap");
+            if (con == null) {
+                JOptionPane.showMessageDialog(this, "Không thể kết nối cơ sở dữ liệu.");
+                return;
+            }
 
-            // Kiểm tra tài khoản đã đăng nhập ở nơi khác chưa
+            String vaiTro = null;
+            String maNV = null;
+            boolean dangDangNhap = false;
+            boolean timThay = false;
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, maNhanVien);
+                ps.setString(2, matKhau);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        timThay = true;
+                        vaiTro = rs.getString("VaiTro");
+                        maNV = rs.getString("MaNhanVien");
+                        dangDangNhap = rs.getBoolean("DangDangNhap");
+                    }
+                }
+            }
+
+            if (!timThay) {
+                JOptionPane.showMessageDialog(this, "Sai mã nhân viên hoặc mật khẩu.");
+                return;
+            }
+
             if (dangDangNhap) {
                 JOptionPane.showMessageDialog(
                         this,
                         "Tài khoản này đang được đăng nhập ở nơi khác.\n"
                         + "Vui lòng đăng xuất trước khi đăng nhập lại."
                 );
-
-                rs.close();
-                ps.close();
                 return;
             }
 
             // Cập nhật trạng thái đang đăng nhập = 1
             String sqlUpdate = "UPDATE TaiKhoan SET DangDangNhap = 1 WHERE MaNhanVien = ?";
-            PreparedStatement psUpdate = con.prepareStatement(sqlUpdate);
-            psUpdate.setString(1, maNV);
-            psUpdate.executeUpdate();
-            psUpdate.close();
+            try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+                psUpdate.setString(1, maNV);
+                psUpdate.executeUpdate();
+            }
 
             // Mở giao diện chính
             jf1 gd = new jf1(vaiTro, maNV);
             gd.setVisible(true);
             this.dispose();
 
-        } else {
-            JOptionPane.showMessageDialog(this, "Sai mã nhân viên hoặc mật khẩu.");
+        } catch (HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi:\n" + e.getMessage());
         }
-
-        rs.close();
-        ps.close();
-
-    } catch (HeadlessException | SQLException e) {
-        JOptionPane.showMessageDialog(this, "Lỗi:\n" + e.getMessage());
     }
-}
     
 
     public static void main(String[] args) {

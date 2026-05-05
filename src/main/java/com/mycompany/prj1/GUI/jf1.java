@@ -16,6 +16,7 @@ import com.toedter.calendar.JDateChooser;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.mycompany.prj1.GUI.GUI_ThongKe;
 import com.mycompany.prj1.DAO.DAO_CALAM;
 import com.mycompany.prj1.DAO.DAO_VETAU;
 import com.mycompany.prj1.ConnectDB.DB;
@@ -282,13 +283,7 @@ jButton6.addActionListener(e -> {
     
 });
 
-jButton9.addActionListener(e -> {
-    if (chuaMoCaThiThongBao("Quản lí nhân viên")) {
-        return;
-    }
 
-    // mở Quản lí nhân viên
-});
 
 jButton11.addActionListener(e -> {
     if (chuaMoCaThiThongBao("Quản lí chuyến tàu")) {
@@ -306,13 +301,6 @@ jButton12.addActionListener(e -> {
     // mở Quản lí tàu
 });
 
-jButton15.addActionListener(e -> {
-    if (chuaMoCaThiThongBao("Quản lí tài khoản")) {
-        return;
-    }
-
-    // mở Quản lí tài khoản
-});
         jComboBox2.setEditable(true);
         chinhPanelAnhNhanVien();
         chinhPanelThongTinCaNhan();
@@ -343,9 +331,7 @@ jButton15.addActionListener(e -> {
 
         coDinhNutVaCuonPhanChonGhe();
         dongBoStyleNutChieuVeVoiChieuDi();
-//        gdQuanLyTaiKhoan = new GUI_QuanLyTaiKhoan();
-//        jPanelNoi_Dung.add(gdQuanLyTaiKhoan, "cardTaiKhoan");
-//        jButton15.addActionListener(e -> moGDQuanLyTaiKhoan());
+
 
 javax.swing.JTextField editorGaDen =
     (javax.swing.JTextField) jComboBox2.getEditor().getEditorComponent();
@@ -818,6 +804,7 @@ jScrollPane3.getViewport().addMouseListener(new java.awt.event.MouseAdapter() {
         jButton3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton3.setIconTextGap(30);
         jButton3.setInheritsPopupMenu(true);
+        jButton3.addActionListener(this::jButton3ActionPerformed);
         jPanel4.add(jButton3);
 
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -1751,6 +1738,11 @@ jScrollPane3.getViewport().addMouseListener(new java.awt.event.MouseAdapter() {
         // TODO add your handling code here:
         moManHinhQuanLyTaiKhoan();
     }//GEN-LAST:event_jButton15ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        moManHinhThongKe();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -8275,44 +8267,66 @@ private void thuNhoLaiCacPanelChonGhe() {
     jPanel32_chieunguoc.repaint();
 }
     private void moManHinhQuanLyNhanVien() {
-    // Kiểm tra quyền (chỉ Quản lý mới được vào)
-    // BỎ DÒNG NÀY NẾU CHƯA MUỐN PHÂN QUYỀN:
-    /*
-    if (!laQuanLy()) {
-        javax.swing.JOptionPane.showMessageDialog(this,
-            "Chỉ quản lý mới được truy cập chức năng này.",
-            "Không có quyền",
-            javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
+        if (chuaMoCaThiThongBao("Quản lí nhân viên")) {
+            return;
+        }
+
+        // Tạo card mới chứa GUI quản lý nhân viên
+        GUI_QuanLyNhanVien pnQLNV = new GUI_QuanLyNhanVien();
+
+        // Wrap vào panel BorderLayout rồi add vào CardLayout của jPanelNoi_Dung
+        javax.swing.JPanel cardWrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+        cardWrapper.add(pnQLNV, java.awt.BorderLayout.CENTER);
+
+        // Thêm vào CardLayout với key duy nhất
+        String cardName = "cardQuanLyNhanVien";
+        jPanelNoi_Dung.add(cardWrapper, cardName);
+
+        // Hiển thị card này
+        java.awt.CardLayout cl = (java.awt.CardLayout) jPanelNoi_Dung.getLayout();
+        cl.show(jPanelNoi_Dung, cardName);
+
+        jPanelNoi_Dung.revalidate();
+        jPanelNoi_Dung.repaint();
     }
-    */
-
-    jPanelNoi_Dung.removeAll();
-
-    GUI_QuanLyNhanVien pnQLNV = new GUI_QuanLyNhanVien();
-    jPanelNoi_Dung.setLayout(new java.awt.BorderLayout());
-    jPanelNoi_Dung.add(pnQLNV, java.awt.BorderLayout.CENTER);
-
-    jPanelNoi_Dung.revalidate();
-    jPanelNoi_Dung.repaint();
-}
 
 private void moManHinhQuanLyTaiKhoan() {
-    /*
-    if (!laQuanLy()) {
-        javax.swing.JOptionPane.showMessageDialog(this,
-            "Chỉ quản lý mới được truy cập chức năng này.",
-            "Không có quyền",
-            javax.swing.JOptionPane.WARNING_MESSAGE);
+        if (chuaMoCaThiThongBao("Quản lí tài khoản")) {
+            return;
+        }
+
+        // Tạo card mới chứa GUI quản lý tài khoản
+        GUI_QuanLyTaiKhoan pnQLTK = new GUI_QuanLyTaiKhoan();
+
+        javax.swing.JPanel cardWrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+        cardWrapper.add(pnQLTK, java.awt.BorderLayout.CENTER);
+
+        String cardName = "cardQuanLyTaiKhoan";
+        jPanelNoi_Dung.add(cardWrapper, cardName);
+
+        java.awt.CardLayout cl = (java.awt.CardLayout) jPanelNoi_Dung.getLayout();
+        cl.show(jPanelNoi_Dung, cardName);
+
+        jPanelNoi_Dung.revalidate();
+        jPanelNoi_Dung.repaint();
+    }
+private void moManHinhThongKe() {
+    if (chuaMoCaThiThongBao("Thống kê")) {
         return;
     }
-    */
 
-    jPanelNoi_Dung.removeAll();
+    // Tạo card thống kê - truyền vai trò để hiển thị tab phù hợp
+    GUI_ThongKe pnTK = new GUI_ThongKe(maNhanVienDangNhap, laQuanLy());
 
-    GUI_QuanLyTaiKhoan pnQLTK = new GUI_QuanLyTaiKhoan();
-    jPanelNoi_Dung.setLayout(new java.awt.BorderLayout());
-    jPanelNoi_Dung.add(pnQLTK, java.awt.BorderLayout.CENTER);
+    // Wrap vào BorderLayout rồi thêm vào CardLayout của jPanelNoi_Dung
+    javax.swing.JPanel cardWrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+    cardWrapper.add(pnTK, java.awt.BorderLayout.CENTER);
+
+    String cardName = "cardThongKe";
+    jPanelNoi_Dung.add(cardWrapper, cardName);
+
+    java.awt.CardLayout cl = (java.awt.CardLayout) jPanelNoi_Dung.getLayout();
+    cl.show(jPanelNoi_Dung, cardName);
 
     jPanelNoi_Dung.revalidate();
     jPanelNoi_Dung.repaint();
