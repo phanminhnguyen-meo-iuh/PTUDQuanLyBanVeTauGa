@@ -2,8 +2,10 @@ C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\Ne
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_CALAM.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_ChuyenTau.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_HANHKHACH.java
+C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_KHUYENMAI.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_NHANVIEN.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_TAIKHOAN.java
+C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_TAU.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_THONGKE.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_TOATAU.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\DAO\DAO_VETAU.java
@@ -21,8 +23,11 @@ C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\Ne
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\entity\ToaTau.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\entity\VaiTro.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\entity\Ve.java
+C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\DialogQuanLyToa.java
+C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\GUI_QuanLyKhuyenMai.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\GUI_QuanLyNhanVien.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\GUI_QuanLyTaiKhoan.java
+C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\GUI_QuanLyTau.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\GUI_ThongKe.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\jf1.java
 C:\Users\WINDOWS\OneDrive - Industrial University of HoChiMinh City\Documents\NetBeansProjects\prj1\src\main\java\com\mycompany\prj1\GUI\KetCa_.java

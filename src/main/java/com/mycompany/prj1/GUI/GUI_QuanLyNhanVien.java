@@ -117,27 +117,40 @@ public class GUI_QuanLyNhanVien extends JPanel {
         pnNorth.setBackground(Color.WHITE);
 
         // Khởi tạo các component nhập
+        // Set kích thước cố định để layout không bị nhảy khi text dài/ngắn
+        Dimension inputSize = new Dimension(180, 28);
+
         txtMaNhanVien = new JTextField();
         txtMaNhanVien.setEditable(false);  // mã tự sinh
         txtMaNhanVien.setBackground(new Color(240, 240, 240));
+        txtMaNhanVien.setPreferredSize(inputSize);
 
         txtHoTen = new JTextField();
+        txtHoTen.setPreferredSize(inputSize);
         txtCccd = new JTextField();
+        txtCccd.setPreferredSize(inputSize);
         txtSdt = new JTextField();
+        txtSdt.setPreferredSize(inputSize);
 
         dcNgaySinh = new JDateChooser();
         dcNgaySinh.setDateFormatString("dd/MM/yyyy");
+        dcNgaySinh.setPreferredSize(inputSize);
 
         dcNgayVaoLam = new JDateChooser();
         dcNgayVaoLam.setDateFormatString("dd/MM/yyyy");
         dcNgayVaoLam.setDate(new Date());
+        dcNgayVaoLam.setPreferredSize(inputSize);
 
         cboGioiTinh = new JComboBox<>(new String[]{"Nam", "Nữ"});
+        cboGioiTinh.setPreferredSize(inputSize);
         cboChucVu = new JComboBox<>(new String[]{"Nhân viên bán vé", "Nhân viên quản lý"});
+        cboChucVu.setPreferredSize(inputSize);
         cboTrangThai = new JComboBox<>(new String[]{"Đang làm", "Đã nghỉ"});
+        cboTrangThai.setPreferredSize(inputSize);
 
         txtAnhNhanVien = new JTextField();
         txtAnhNhanVien.setEditable(false);
+        txtAnhNhanVien.setPreferredSize(inputSize);
         btnChonAnh = new JButton("...");
         btnChonAnh.setPreferredSize(new Dimension(40, 28));
 
@@ -222,6 +235,10 @@ public class GUI_QuanLyNhanVien extends JPanel {
     private JLabel boldLabel(String text) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        // Cố định kích thước label để layout không bị nhảy khi đổi text trong các ô input
+        Dimension labelSize = new Dimension(110, 28);
+        lbl.setPreferredSize(labelSize);
+        lbl.setMinimumSize(labelSize);
         return lbl;
     }
 

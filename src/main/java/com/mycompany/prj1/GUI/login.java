@@ -139,6 +139,17 @@ public class login extends JFrame {
     
 
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(() -> new login().setVisible(true));
+    // Áp FlatLaf TRƯỚC khi tạo bất kỳ component nào
+    try {
+        com.formdev.flatlaf.FlatLightLaf.setup();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            new login().setVisible(true);
+        }
+    });
     }
 }

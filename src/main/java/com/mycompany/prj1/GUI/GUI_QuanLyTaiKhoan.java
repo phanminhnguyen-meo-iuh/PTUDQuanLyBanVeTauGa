@@ -118,21 +118,29 @@ public class GUI_QuanLyTaiKhoan extends JPanel {
         ));
         pnNorth.setBackground(Color.WHITE);
 
-        // Khởi tạo các trường nhập
+        // Khởi tạo các trường nhập với kích thước cố định
+        Dimension inputSize = new Dimension(180, 28);
+
         txtMaTaiKhoan = new JTextField();
         txtMaTaiKhoan.setEditable(false);
         txtMaTaiKhoan.setBackground(new Color(240, 240, 240));
+        txtMaTaiKhoan.setPreferredSize(inputSize);
 
         cboNhanVien = new JComboBox<>();
+        cboNhanVien.setPreferredSize(inputSize);
 
         txtHoTenNV = new JTextField();
         txtHoTenNV.setEditable(false);
         txtHoTenNV.setBackground(new Color(240, 240, 240));
+        txtHoTenNV.setPreferredSize(inputSize);
 
         txtMatKhau = new JPasswordField();
+        txtMatKhau.setPreferredSize(inputSize);
 
         cboVaiTro = new JComboBox<>(new String[]{"NHANVIEN", "QUANLY"});
+        cboVaiTro.setPreferredSize(inputSize);
         cboTrangThai = new JComboBox<>(new String[]{"Đang hoạt động", "Đã khoá"});
+        cboTrangThai.setPreferredSize(inputSize);
 
         // Layout grid
         JPanel pnFields = new JPanel(new GridBagLayout());
@@ -198,6 +206,10 @@ public class GUI_QuanLyTaiKhoan extends JPanel {
     private JLabel boldLabel(String text) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        // Cố định kích thước label để layout không bị nhảy
+        Dimension labelSize = new Dimension(110, 28);
+        lbl.setPreferredSize(labelSize);
+        lbl.setMinimumSize(labelSize);
         return lbl;
     }
 

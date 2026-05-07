@@ -820,6 +820,7 @@ jScrollPane3.getViewport().addMouseListener(new java.awt.event.MouseAdapter() {
         jButton5.setText("Quản lí khuyến mãi");
         jButton5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton5.setIconTextGap(20);
+        jButton5.addActionListener(this::jButton5ActionPerformed);
         jPanel4.add(jButton5);
 
         jButton9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -874,6 +875,7 @@ jScrollPane3.getViewport().addMouseListener(new java.awt.event.MouseAdapter() {
         jButton12.setText("Quản lí tàu");
         jButton12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton12.setIconTextGap(30);
+        jButton12.addActionListener(this::jButton12ActionPerformed);
         jPanel4.add(jButton12);
 
         jScrollPane1.setViewportView(jPanel4);
@@ -1743,6 +1745,16 @@ jScrollPane3.getViewport().addMouseListener(new java.awt.event.MouseAdapter() {
         // TODO add your handling code here:
         moManHinhThongKe();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        moManHinhQuanLyKhuyenMai();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        // TODO add your handling code here:
+        moManHinhQuanLyTau();
+    }//GEN-LAST:event_jButton12ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -8323,6 +8335,45 @@ private void moManHinhThongKe() {
     cardWrapper.add(pnTK, java.awt.BorderLayout.CENTER);
 
     String cardName = "cardThongKe";
+    jPanelNoi_Dung.add(cardWrapper, cardName);
+
+    java.awt.CardLayout cl = (java.awt.CardLayout) jPanelNoi_Dung.getLayout();
+    cl.show(jPanelNoi_Dung, cardName);
+
+    jPanelNoi_Dung.revalidate();
+    jPanelNoi_Dung.repaint();
+}
+    private void moManHinhQuanLyKhuyenMai() {
+    if (chuaMoCaThiThongBao("Quản lí khuyến mãi")) {
+        return;
+    }
+
+    GUI_QuanLyKhuyenMai pnQLKM = new GUI_QuanLyKhuyenMai();
+
+    javax.swing.JPanel cardWrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+    cardWrapper.add(pnQLKM, java.awt.BorderLayout.CENTER);
+
+    String cardName = "cardQuanLyKhuyenMai";
+    jPanelNoi_Dung.add(cardWrapper, cardName);
+
+    java.awt.CardLayout cl = (java.awt.CardLayout) jPanelNoi_Dung.getLayout();
+    cl.show(jPanelNoi_Dung, cardName);
+
+    jPanelNoi_Dung.revalidate();
+    jPanelNoi_Dung.repaint();
+}
+
+private void moManHinhQuanLyTau() {
+    if (chuaMoCaThiThongBao("Quản lí tàu")) {
+        return;
+    }
+
+    GUI_QuanLyTau pnQLT = new GUI_QuanLyTau();
+
+    javax.swing.JPanel cardWrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+    cardWrapper.add(pnQLT, java.awt.BorderLayout.CENTER);
+
+    String cardName = "cardQuanLyTau";
     jPanelNoi_Dung.add(cardWrapper, cardName);
 
     java.awt.CardLayout cl = (java.awt.CardLayout) jPanelNoi_Dung.getLayout();
