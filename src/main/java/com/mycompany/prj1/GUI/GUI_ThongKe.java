@@ -408,17 +408,10 @@ public class GUI_ThongKe extends JPanel {
                 tbl.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
             }
 
-            // Render cột "Hạng" có icon huy chương
-            tbl.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable t, Object v,
-                        boolean sel, boolean foc, int r, int c) {
-                    Component comp = super.getTableCellRendererComponent(t, v, sel, foc, r, c);
-                    setHorizontalAlignment(SwingConstants.CENTER);
-                    setFont(new Font("Segoe UI", Font.BOLD, 16));
-                    return comp;
-                }
-            });
+            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+            centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+            centerRenderer.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tbl.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 
             DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
             rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -441,14 +434,8 @@ public class GUI_ThongKe extends JPanel {
             List<HieuSuatNhanVien> ds = dao.layHieuSuatNhanVien(tu, den);
             int hang = 1;
             for (HieuSuatNhanVien h : ds) {
-                String medal;
-                if (hang == 1) medal = "🥇";
-                else if (hang == 2) medal = "🥈";
-                else if (hang == 3) medal = "🥉";
-                else medal = String.valueOf(hang);
-
                 model.addRow(new Object[]{
-                    medal,
+                    hang,
                     h.maNhanVien,
                     h.hoTenNV,
                     h.chucVu,
@@ -704,29 +691,74 @@ public class GUI_ThongKe extends JPanel {
         public PanelTrangChu() {
             setLayout(new BorderLayout());
             setBackground(new Color(245, 247, 250));
-            setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+            setBorder(BorderFactory.createEmptyBorder(24, 40, 24, 40));
 
-            // NORTH: tiêu đề + mô tả
+            // NORTH: tiêu đề + 4 KPI cards + bar chart
+            JPanel pnNorth = new JPanel();
+            pnNorth.setLayout(new BoxLayout(pnNorth, BoxLayout.Y_AXIS));
+            pnNorth.setOpaque(false);
+
             JPanel pnHeader = new JPanel();
             pnHeader.setLayout(new BoxLayout(pnHeader, BoxLayout.Y_AXIS));
             pnHeader.setOpaque(false);
-            pnHeader.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
+            pnHeader.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
+            pnHeader.setAlignmentX(Component.LEFT_ALIGNMENT);
 
             JLabel lblTitle = new JLabel("Báo cáo & Thống kê");
             lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
             lblTitle.setForeground(new Color(33, 37, 41));
             lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-            JLabel lblSub = new JLabel("Chọn loại báo cáo bạn muốn xem chi tiết");
-            lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            JLabel lblSub = new JLabel("Tổng quan hôm nay — " +
+                    java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
             lblSub.setForeground(new Color(108, 117, 125));
-            lblSub.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
+            lblSub.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
             lblSub.setAlignmentX(Component.LEFT_ALIGNMENT);
 
             pnHeader.add(lblTitle);
             pnHeader.add(lblSub);
+            pnNorth.add(pnHeader);
 
-            add(pnHeader, BorderLayout.NORTH);
+            // 4 KPI cards hôm nay
+            LocalDate homNay = java.time.LocalDate.now();
+            TomTat tomTatHomNay = dao.layTomTatDoanhThu(homNay, homNay);
+            int soDoiTra = dao.laySoVeDoiTraHomNay();
+            double tiLeLapDay = dao.layTiLeLapDay(homNay);
+
+            JPanel pnKPI = new JPanel(new GridLayout(1, 4, 12, 0));
+            pnKPI.setOpaque(false);
+            pnKPI.setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
+            pnKPI.setAlignmentX(Component.LEFT_ALIGNMENT);
+            pnKPI.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
+
+            pnKPI.add(taoCardTomTat("VÉ BÁN HÔM NAY",
+                    String.valueOf(tomTatHomNay.tongVe), new Color(0, 123, 255)));
+            pnKPI.add(taoCardTomTat("DOANH THU HÔM NAY",
+                    dinhDangTien.format(tomTatHomNay.tongDoanhThu) + " ₫", new Color(40, 167, 69)));
+            pnKPI.add(taoCardTomTat("ĐỔI / TRẢ HÔM NAY",
+                    String.valueOf(soDoiTra), new Color(220, 53, 69)));
+            pnKPI.add(taoCardTomTat("TỈ LỆ LẤP ĐẦY",
+                    String.format("%.1f%%", tiLeLapDay), new Color(255, 153, 0)));
+            pnNorth.add(pnKPI);
+
+            // Bar chart theo khung giờ
+            long[] khungGio = dao.layDoanhThuTheoKhungGio(homNay);
+            JPanel barChart = new BarChartKhungGio(khungGio);
+            barChart.setAlignmentX(Component.LEFT_ALIGNMENT);
+            barChart.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+            barChart.setBorder(BorderFactory.createTitledBorder("Doanh thu theo khung giờ hôm nay"));
+            pnNorth.add(barChart);
+            pnNorth.add(Box.createVerticalStrut(12));
+
+            JLabel lblNav = new JLabel("Chọn loại báo cáo chi tiết:");
+            lblNav.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            lblNav.setForeground(new Color(33, 37, 41));
+            lblNav.setAlignmentX(Component.LEFT_ALIGNMENT);
+            pnNorth.add(lblNav);
+            pnNorth.add(Box.createVerticalStrut(8));
+
+            add(pnNorth, BorderLayout.NORTH);
 
             // CENTER: lưới các thẻ
             JPanel pnGrid = new JPanel(new GridLayout(0, 2, 20, 20));
@@ -856,6 +888,73 @@ public class GUI_ThongKe extends JPanel {
             }
 
             return pnThe;
+        }
+    }
+
+    // ==========================================================
+    // BAR CHART KHUNG GIỜ
+    // ==========================================================
+
+    private static class BarChartKhungGio extends JPanel {
+        private static final String[] LABELS = {"Sáng\n6-10h", "Trưa\n11-13h", "Chiều\n14-17h", "Tối\n18-21h"};
+        private static final Color[] COLORS = {
+            new Color(0, 123, 255), new Color(255, 153, 0),
+            new Color(40, 167, 69), new Color(108, 117, 125)
+        };
+        private final long[] values;
+
+        BarChartKhungGio(long[] values) {
+            this.values = values;
+            setOpaque(false);
+            setPreferredSize(new java.awt.Dimension(600, 130));
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            super.paintComponent(g);
+            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,
+                    java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int w = getWidth(), h = getHeight();
+            int pad = 32, barGap = 20;
+            int n = 4;
+            int barW = (w - pad * 2 - barGap * (n - 1)) / n;
+            int chartH = h - pad - 36; // leave bottom for labels
+
+            long maxVal = 1;
+            for (long v : values) if (v > maxVal) maxVal = v;
+
+            java.text.NumberFormat nf = java.text.NumberFormat.getIntegerInstance(new java.util.Locale("vi"));
+
+            for (int i = 0; i < n; i++) {
+                int x = pad + i * (barW + barGap);
+                int barH = values[i] == 0 ? 2 : (int) (chartH * values[i] / maxVal);
+                int y = pad + chartH - barH;
+
+                g2.setColor(COLORS[i]);
+                g2.fillRoundRect(x, y, barW, barH, 6, 6);
+
+                // Value label above bar
+                if (values[i] > 0) {
+                    g2.setColor(new Color(33, 37, 41));
+                    g2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 10));
+                    String val = nf.format(values[i] / 1000) + "K";
+                    java.awt.FontMetrics fm = g2.getFontMetrics();
+                    g2.drawString(val, x + (barW - fm.stringWidth(val)) / 2, y - 3);
+                }
+
+                // X-axis label
+                g2.setColor(new Color(108, 117, 125));
+                g2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 10));
+                String[] lines = LABELS[i].split("\n");
+                java.awt.FontMetrics fm = g2.getFontMetrics();
+                for (int li = 0; li < lines.length; li++) {
+                    int lx = x + (barW - fm.stringWidth(lines[li])) / 2;
+                    g2.drawString(lines[li], lx, pad + chartH + 14 + li * 13);
+                }
+            }
+            g2.dispose();
         }
     }
 }

@@ -137,7 +137,7 @@ public class GUI_QuanLyTaiKhoan extends JPanel {
         txtMatKhau = new JPasswordField();
         txtMatKhau.setPreferredSize(inputSize);
 
-        cboVaiTro = new JComboBox<>(new String[]{"NHANVIEN", "QUANLY"});
+        cboVaiTro = new JComboBox<>(new String[]{"NHAN_VIEN", "QUAN_LY"});
         cboVaiTro.setPreferredSize(inputSize);
         cboTrangThai = new JComboBox<>(new String[]{"Đang hoạt động", "Đã khoá"});
         cboTrangThai.setPreferredSize(inputSize);

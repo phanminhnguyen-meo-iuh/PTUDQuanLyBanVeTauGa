@@ -73,7 +73,7 @@ public class DAO_THONGKE {
                 "       SUM(tongTien) AS doanhThu " +
                 "FROM Ve " +
                 "WHERE ngayBan >= ? AND ngayBan < DATEADD(DAY, 1, ?) " +
-                "  AND trangThaiVe = N'Đã thanh toán' " +
+                "  AND trangThaiVe LIKE N'Đã thanh toán%' " +
                 "GROUP BY CAST(ngayBan AS DATE) " +
                 "ORDER BY ngay";
 
@@ -111,7 +111,7 @@ public class DAO_THONGKE {
                 "SELECT COUNT(*) AS tongVe, ISNULL(SUM(tongTien), 0) AS tongTien " +
                 "FROM Ve " +
                 "WHERE ngayBan >= ? AND ngayBan < DATEADD(DAY, 1, ?) " +
-                "  AND trangThaiVe = N'Đã thanh toán'";
+                "  AND trangThaiVe LIKE N'Đã thanh toán%'";
 
         try (
             Connection con = DB.getConnection();
@@ -153,7 +153,7 @@ public class DAO_THONGKE {
                 "LEFT JOIN Ve v ON nv.maNhanVien = v.nhanVien " +
                 "    AND v.ngayBan >= ? " +
                 "    AND v.ngayBan < DATEADD(DAY, 1, ?) " +
-                "    AND v.trangThaiVe = N'Đã thanh toán' " +
+                "    AND v.trangThaiVe LIKE N'Đã thanh toán%' " +
                 "WHERE nv.trangThaiNV = 1 " +
                 "GROUP BY nv.maNhanVien, nv.hoTenNV, nv.chucVu " +
                 "ORDER BY doanhThu DESC, soVeBan DESC";
@@ -201,10 +201,10 @@ public class DAO_THONGKE {
                 "               WHERE tt.tau = ct.tau), 0) AS tongGhe, " +
                 "       ISNULL((SELECT COUNT(*) FROM Ve v " +
                 "               WHERE v.chuyenTau = ct.maChuyenTau " +
-                "                 AND v.trangThaiVe = N'Đã thanh toán'), 0) AS daBan, " +
+                "                 AND v.trangThaiVe LIKE N'Đã thanh toán%'), 0) AS daBan, " +
                 "       ISNULL((SELECT SUM(v.tongTien) FROM Ve v " +
                 "               WHERE v.chuyenTau = ct.maChuyenTau " +
-                "                 AND v.trangThaiVe = N'Đã thanh toán'), 0) AS doanhThu " +
+                "                 AND v.trangThaiVe LIKE N'Đã thanh toán%'), 0) AS doanhThu " +
                 "FROM ChuyenTau ct " +
                 "JOIN Ga gaDi ON ct.gaDi = gaDi.maGa " +
                 "JOIN Ga gaDen ON ct.gaDen = gaDen.maGa " +
@@ -256,7 +256,7 @@ public class DAO_THONGKE {
                 "FROM Ve " +
                 "WHERE nhanVien = ? " +
                 "  AND ngayBan >= ? AND ngayBan < DATEADD(DAY, 1, ?) " +
-                "  AND trangThaiVe = N'Đã thanh toán'";
+                "  AND trangThaiVe LIKE N'Đã thanh toán%'";
 
         try (
             Connection con = DB.getConnection();
@@ -295,7 +295,7 @@ public class DAO_THONGKE {
                 "FROM Ve " +
                 "WHERE nhanVien = ? " +
                 "  AND ngayBan >= ? AND ngayBan < DATEADD(DAY, 1, ?) " +
-                "  AND trangThaiVe = N'Đã thanh toán' " +
+                "  AND trangThaiVe LIKE N'Đã thanh toán%' " +
                 "GROUP BY CAST(ngayBan AS DATE) " +
                 "ORDER BY ngay DESC";
 
@@ -321,5 +321,108 @@ public class DAO_THONGKE {
         }
 
         return ds;
+    }
+
+    // ==========================================================
+    // CÁC METHOD CHO DASHBOARD TRANG CHỦ
+    // ==========================================================
+
+    /**
+     * Đếm số vé bị đổi hoặc trả trong NGÀY HÔM NAY.
+     */
+    public int laySoVeDoiTraHomNay() {
+        String sql =
+                "SELECT COUNT(*) FROM Ve " +
+                "WHERE CAST(ngayBan AS DATE) = CAST(GETDATE() AS DATE) " +
+                "  AND (trangThaiVe = N'Đã trả' OR trangThaiVe LIKE N'Đã đổi%')";
+
+        try (
+            java.sql.Connection con = com.mycompany.prj1.ConnectDB.DB.getConnection();
+            java.sql.PreparedStatement ps = con.prepareStatement(sql);
+            java.sql.ResultSet rs = ps.executeQuery()
+        ) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Tính tỉ lệ lấp đầy trung bình của tất cả chuyến trong ngày được chọn.
+     * = SUM(số ghế đã bán) / SUM(tổng sức chứa) * 100
+     */
+    public double layTiLeLapDay(LocalDate ngay) {
+        String sql =
+                "SELECT " +
+                "  ISNULL(SUM(daBan), 0) AS tongDaBan, " +
+                "  ISNULL(SUM(tongGhe), 0) AS tongGhe " +
+                "FROM ( " +
+                "  SELECT " +
+                "    ct.maChuyenTau, " +
+                "    ISNULL((SELECT SUM(tt.sucChua) FROM ToaTau tt WHERE tt.tau = ct.tau), 0) AS tongGhe, " +
+                "    ISNULL((SELECT COUNT(*) FROM Ve v " +
+                "            WHERE v.chuyenTau = ct.maChuyenTau " +
+                "              AND v.trangThaiVe LIKE N'Đã thanh toán%'), 0) AS daBan " +
+                "  FROM ChuyenTau ct " +
+                "  WHERE CAST(ct.ngayKhoiHanh AS DATE) = ? " +
+                ") t";
+
+        try (
+            java.sql.Connection con = com.mycompany.prj1.ConnectDB.DB.getConnection();
+            java.sql.PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+            ps.setDate(1, java.sql.Date.valueOf(ngay));
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    long daBan = rs.getLong("tongDaBan");
+                    long tongGhe = rs.getLong("tongGhe");
+                    if (tongGhe == 0) return 0;
+                    return (double) daBan * 100 / tongGhe;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Lấy doanh thu theo 4 khung giờ trong ngày:
+     *   [0] Sáng  6-10h
+     *   [1] Trưa 11-13h
+     *   [2] Chiều 14-17h
+     *   [3] Tối  18-21h
+     */
+    public long[] layDoanhThuTheoKhungGio(LocalDate ngay) {
+        long[] kq = new long[4];
+
+        String sql =
+                "SELECT DATEPART(HOUR, ngayBan) AS gio, ISNULL(SUM(tongTien), 0) AS doanhThu " +
+                "FROM Ve " +
+                "WHERE CAST(ngayBan AS DATE) = ? " +
+                "  AND trangThaiVe LIKE N'Đã thanh toán%' " +
+                "GROUP BY DATEPART(HOUR, ngayBan)";
+
+        try (
+            java.sql.Connection con = com.mycompany.prj1.ConnectDB.DB.getConnection();
+            java.sql.PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+            ps.setDate(1, java.sql.Date.valueOf(ngay));
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int gio = rs.getInt("gio");
+                    long dt = rs.getLong("doanhThu");
+                    if (gio >= 6 && gio <= 10) kq[0] += dt;
+                    else if (gio >= 11 && gio <= 13) kq[1] += dt;
+                    else if (gio >= 14 && gio <= 17) kq[2] += dt;
+                    else if (gio >= 18 && gio <= 21) kq[3] += dt;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return kq;
     }
 }

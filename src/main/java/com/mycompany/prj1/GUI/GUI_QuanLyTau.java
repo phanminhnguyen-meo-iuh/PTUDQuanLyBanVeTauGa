@@ -71,8 +71,7 @@ public class GUI_QuanLyTau extends JPanel {
     };
 
     private static final String[] DS_TRANG_THAI = {
-        "Hoạt động", "Bảo trì", "Dừng hoạt động"
-    };
+        "Hoạt động", "Bảo trì", "Dừng hoạt động"};
 
     public GUI_QuanLyTau() {
         setLayout(new BorderLayout());

@@ -1,4 +1,4 @@
-package com.mycompany.prj1.dao;
+package com.mycompany.prj1.DAO;
 
 import com.mycompany.prj1.entity.ChuyenTau;
 import com.mycompany.prj1.entity.Ga;

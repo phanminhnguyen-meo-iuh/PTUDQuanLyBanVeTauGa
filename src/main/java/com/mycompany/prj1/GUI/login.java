@@ -151,5 +151,5 @@ public class login extends JFrame {
             new login().setVisible(true);
         }
     });
-    }
+}
 }

@@ -176,7 +176,7 @@ public class DAO_NHANVIEN {
                 // Lấy phần số sau NV
                 try {
                     int so = Integer.parseInt(maxMa.substring(2)) + 1;
-                    return String.format("NV%1d", so);
+                    return String.format("NV%03d", so);
                 } catch (NumberFormatException e) {
                     return "NV001";
                 }

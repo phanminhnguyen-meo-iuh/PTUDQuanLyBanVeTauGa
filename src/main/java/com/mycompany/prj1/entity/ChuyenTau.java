@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.prj1.entity;
 
-/**
- *
- * @author WINDOWS
- */
 import java.time.LocalDateTime;
 
 public class ChuyenTau {
@@ -19,6 +11,7 @@ public class ChuyenTau {
     private Ga gaDen;
     private boolean trangThaiChuyen;
     private Tau tau;
+    private int cuLy;   // mới thêm - khoảng cách (km)
 
     public ChuyenTau() {
     }
@@ -34,6 +27,13 @@ public class ChuyenTau {
         this.gaDen = gaDen;
         this.trangThaiChuyen = trangThaiChuyen;
         this.tau = tau;
+    }
+
+    public ChuyenTau(String maChuyen, String tenChuyen, LocalDateTime ngayKhoiHanh,
+                     LocalDateTime ngayDenDuKien, Ga gaDi, Ga gaDen,
+                     boolean trangThaiChuyen, Tau tau, int cuLy) {
+        this(maChuyen, tenChuyen, ngayKhoiHanh, ngayDenDuKien, gaDi, gaDen, trangThaiChuyen, tau);
+        this.cuLy = cuLy;
     }
 
     public String getMaChuyen() {
@@ -91,13 +91,20 @@ public class ChuyenTau {
     public void setTrangThaiChuyen(boolean trangThaiChuyen) {
         this.trangThaiChuyen = trangThaiChuyen;
     }
-    
+
     public void setTau(Tau tau) {
-        this.tau= tau;
+        this.tau = tau;
     }
 
     public Tau getTau() {
         return tau;
     }
 
+    public int getCuLy() {
+        return cuLy;
+    }
+
+    public void setCuLy(int cuLy) {
+        this.cuLy = cuLy;
+    }
 }
